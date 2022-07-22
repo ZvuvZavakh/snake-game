@@ -10,6 +10,7 @@ import zvuv.zavakh.game.snake.common.GameManager;
 import zvuv.zavakh.game.snake.config.GameConfig;
 import zvuv.zavakh.game.snake.entity.*;
 
+@Deprecated
 public class Controller {
 
     private final CollisionListener collisionListener;

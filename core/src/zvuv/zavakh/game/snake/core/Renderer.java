@@ -21,6 +21,7 @@ import zvuv.zavakh.game.snake.util.GdxUtils;
 import zvuv.zavakh.game.snake.util.ViewportUtils;
 import zvuv.zavakh.game.snake.util.debug.DebugCameraController;
 
+@Deprecated
 public class Renderer implements Disposable {
 
     private static final float PADDING = 20.0f;
