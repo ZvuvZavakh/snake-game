@@ -44,6 +44,14 @@ public abstract class EntityBase {
         return y;
     }
 
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeigth() {
+        return heigth;
+    }
+
     private void updateBounds() {
         bounds.setPosition(x, y);
         bounds.setSize(width, heigth);

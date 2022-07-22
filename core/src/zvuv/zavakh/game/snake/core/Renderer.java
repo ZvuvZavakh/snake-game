@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
@@ -12,9 +14,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import zvuv.zavakh.game.snake.App;
 import zvuv.zavakh.game.snake.common.AssetsDescriptors;
 import zvuv.zavakh.game.snake.common.GameManager;
+import zvuv.zavakh.game.snake.common.RegionNames;
 import zvuv.zavakh.game.snake.config.GameConfig;
-import zvuv.zavakh.game.snake.entity.BodyPart;
-import zvuv.zavakh.game.snake.entity.EntityBase;
+import zvuv.zavakh.game.snake.entity.*;
 import zvuv.zavakh.game.snake.util.GdxUtils;
 import zvuv.zavakh.game.snake.util.ViewportUtils;
 import zvuv.zavakh.game.snake.util.debug.DebugCameraController;
@@ -33,6 +35,11 @@ public class Renderer implements Disposable {
     private BitmapFont bitmapFont;
     private final GlyphLayout glyphLayout = new GlyphLayout();
 
+    private TextureRegion backgroundRegion;
+    private TextureRegion headRegion;
+    private TextureRegion bodyRegion;
+    private TextureRegion coinRegion;
+
     public Renderer(Controller controller, App app) {
         this.controller = controller;
         this.app = app;
@@ -43,6 +50,12 @@ public class Renderer implements Disposable {
         debugCameraController = new DebugCameraController();
         debugCameraController.setStartPosition(GameConfig.WORLD_CENTER_X, GameConfig.WORLD_CENTER_Y);
         bitmapFont = app.getAssetManager().get(AssetsDescriptors.UI_FONT);
+
+        TextureAtlas gameplayAtlas = app.getAssetManager().get(AssetsDescriptors.GAMEPLAY_ATLAS);
+        backgroundRegion = gameplayAtlas.findRegion(RegionNames.BACKGROUND);
+        headRegion = gameplayAtlas.findRegion(RegionNames.HEAD);
+        bodyRegion = gameplayAtlas.findRegion(RegionNames.BODY);
+        coinRegion = gameplayAtlas.findRegion(RegionNames.COIN);
     }
 
     public void render(float delta) {
@@ -51,8 +64,40 @@ public class Renderer implements Disposable {
 
         GdxUtils.clearScreen();
 
+        renderGameplay();
         renderHud();
         renderDebug();
+    }
+
+    private void renderGameplay() {
+        viewport.apply();
+        app.getSpriteBatch().setProjectionMatrix(camera.combined);
+        app.getSpriteBatch().begin();
+        drawGameplay();
+        app.getSpriteBatch().end();
+    }
+
+    private void drawGameplay() {
+        app.getSpriteBatch()
+                .draw(backgroundRegion, 0, 0, GameConfig.WORLD_WIDTH, GameConfig.WORLD_HEIGHT);
+
+        Coin coin = controller.getCoin();
+
+        if (coin.isAvailable()) {
+            app.getSpriteBatch()
+                    .draw(coinRegion, coin.getX(), coin.getY(), coin.getWidth(), coin.getHeigth());
+        }
+
+        Snake snake = controller.getSnake();
+
+        for (BodyPart bodyPart : snake.getBodyParts()) {
+            app.getSpriteBatch()
+                    .draw(bodyRegion, bodyPart.getX(), bodyPart.getY(), bodyPart.getWidth(), bodyPart.getHeigth());
+        }
+
+        SnakeHead snakeHead = controller.getSnake().getSnakeHead();
+        app.getSpriteBatch()
+                .draw(headRegion, snakeHead.getX(), snakeHead.getY(), snakeHead.getWidth(), snakeHead.getHeigth());
     }
 
     private void renderHud() {

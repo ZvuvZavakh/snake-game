@@ -1,0 +1,11 @@
+{
+  "com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle": {
+    "play": {
+      "up": "play-button"
+    },
+
+    "quit": {
+      "up": "quit-button"
+    }
+  }
+}
