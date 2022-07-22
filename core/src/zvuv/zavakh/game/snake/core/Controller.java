@@ -5,19 +5,24 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+import zvuv.zavakh.game.snake.common.CollisionListener;
 import zvuv.zavakh.game.snake.common.GameManager;
 import zvuv.zavakh.game.snake.config.GameConfig;
 import zvuv.zavakh.game.snake.entity.*;
 
 public class Controller {
 
+    private final CollisionListener collisionListener;
     private Snake snake;
     private Coin coin;
     private float timer;
 
-    public Controller() {
+    public Controller(CollisionListener collisionListener) {
+        this.collisionListener = collisionListener;
         snake = new Snake();
         coin = new Coin();
+
+        restart();
     }
 
     public void update(float delta) {
@@ -36,14 +41,6 @@ public class Controller {
             }
 
             spawnCoin();
-        } else {
-            checkForRestart();
-        }
-    }
-
-    private void checkForRestart() {
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            restart();
         }
     }
 
@@ -66,6 +63,8 @@ public class Controller {
             Rectangle bodyPartBounds = bodyPart.getBounds();
 
             if (Intersector.overlaps(snakeHeadBounds, bodyPartBounds)) {
+                collisionListener.lose();
+                GameManager.INSTANCE.updateHighScore();
                 GameManager.INSTANCE.setGameOver();
                 break;
             }
@@ -80,6 +79,7 @@ public class Controller {
         boolean overlaps = Intersector.overlaps(snakeHeadBounds, coinBounds);
 
         if (coin.isAvailable() && overlaps) {
+            collisionListener.hitCoin();
             snake.addBodyPart();
             coin.setAvailable(false);
             GameManager.INSTANCE.incrementScore(GameConfig.COIN_VALUE);

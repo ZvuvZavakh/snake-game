@@ -59,14 +59,19 @@ public class Renderer implements Disposable {
     }
 
     public void render(float delta) {
-        debugCameraController.handleDebugInput(delta);
-        debugCameraController.applyTo(camera);
+        if (GameManager.debugEnabled) {
+            debugCameraController.handleDebugInput(delta);
+            debugCameraController.applyTo(camera);
+        }
 
         GdxUtils.clearScreen();
 
         renderGameplay();
         renderHud();
-        renderDebug();
+
+        if (GameManager.debugEnabled) {
+            renderDebug();
+        }
     }
 
     private void renderGameplay() {

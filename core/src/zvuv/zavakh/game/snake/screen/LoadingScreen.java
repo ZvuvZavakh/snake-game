@@ -1,7 +1,6 @@
 package zvuv.zavakh.game.snake.screen;
 
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -31,12 +30,12 @@ public class LoadingScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
         GdxUtils.clearScreen();
-        
+
         update(delta);
         draw();
 
         if (ready) {
-            app.setScreen(new GameScreen(app));
+            app.setScreen(new MenuScreen(app));
         }
     }
 
@@ -87,6 +86,8 @@ public class LoadingScreen extends ScreenAdapter {
         app.getAssetManager().load(AssetsDescriptors.UI_FONT);
         app.getAssetManager().load(AssetsDescriptors.GAMEPLAY_ATLAS);
         app.getAssetManager().load(AssetsDescriptors.UI_SKIN);
+        app.getAssetManager().load(AssetsDescriptors.COIN_SOUND);
+        app.getAssetManager().load(AssetsDescriptors.LOSE_SOUND);
     }
 
     @Override

@@ -1,16 +1,26 @@
 package zvuv.zavakh.game.snake.common;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
+
 public class GameManager {
 
     public static final GameManager INSTANCE = new GameManager();
+    public static final boolean debugEnabled = false;
+    private static final String HIGH_SCORE_KEY = "highscore";
 
+    private Preferences preferences;
     private GameState state = GameState.READY;
     private int score;
     private int displayScore;
     private int highScore;
     private int displayHighScore;
 
-    private GameManager() {}
+    private GameManager() {
+        preferences = Gdx.app.getPreferences("gamedata");
+        highScore = preferences.getInteger(HIGH_SCORE_KEY, 0);
+        displayHighScore = highScore;
+    }
 
     public void setPlaying() {
         state = GameState.PLAYING;
@@ -18,6 +28,10 @@ public class GameManager {
 
     public void setGameOver() {
         state = GameState.GAME_OVER;
+    }
+
+    public boolean isGameOver() {
+        return state == GameState.GAME_OVER;
     }
 
     public GameState getState() {
@@ -46,6 +60,16 @@ public class GameManager {
         if (displayHighScore < highScore) {
             displayHighScore = Math.min(highScore, displayHighScore + (int) (100 * delta));
         }
+    }
+
+    public void updateHighScore() {
+        if (score < highScore) {
+            return;
+        }
+
+        highScore = score;
+        preferences.putInteger(HIGH_SCORE_KEY, highScore);
+        preferences.flush();
     }
 
     public int getDisplayScore() {
