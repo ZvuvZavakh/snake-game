@@ -21,6 +21,8 @@ public class Controller {
     }
 
     public void update(float delta) {
+        GameManager.INSTANCE.updateDisplayScore(delta);
+
         if (GameManager.INSTANCE.getState().isPlaying()) {
             queryInput();
             timer += delta;
@@ -46,7 +48,7 @@ public class Controller {
     }
 
     private void restart() {
-        GameManager.INSTANCE.setPlaying();
+        GameManager.INSTANCE.reset();
         snake.reset();
         coin.setAvailable(false);
         timer = 0f;
@@ -80,13 +82,14 @@ public class Controller {
         if (coin.isAvailable() && overlaps) {
             snake.addBodyPart();
             coin.setAvailable(false);
+            GameManager.INSTANCE.incrementScore(GameConfig.COIN_VALUE);
         }
     }
 
     private void spawnCoin() {
         if (!coin.isAvailable()) {
             float x = MathUtils.random((int) (GameConfig.WORLD_WIDTH - GameConfig.COIN_SIZE));
-            float y = MathUtils.random((int) (GameConfig.WORLD_HEIGHT - GameConfig.COIN_SIZE));
+            float y = MathUtils.random((int) (GameConfig.MAX_Y - GameConfig.COIN_SIZE));
 
             coin.setPosition(x, y);
             coin.setAvailable(true);
@@ -102,10 +105,10 @@ public class Controller {
             snakeHead.setX(GameConfig.WORLD_WIDTH - GameConfig.SNAKE_SPEED);
         }
 
-        if (snakeHead.getY() >= GameConfig.WORLD_HEIGHT) {
+        if (snakeHead.getY() >= GameConfig.MAX_Y) {
             snakeHead.setY(0f);
         } else if (snakeHead.getY() < 0) {
-            snakeHead.setY(GameConfig.WORLD_HEIGHT - GameConfig.SNAKE_SPEED);
+            snakeHead.setY(GameConfig.MAX_Y - GameConfig.SNAKE_SPEED);
         }
     }
 

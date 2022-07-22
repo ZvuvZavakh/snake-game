@@ -27,7 +27,7 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void show() {
         controller = new Controller();
-        renderer = new Renderer(controller);
+        renderer = new Renderer(controller, app);
     }
 
     @Override
