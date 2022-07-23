@@ -29,4 +29,9 @@ public class PositionComponent implements Component, Pool.Poolable {
     public void setY(float y) {
         this.y = y;
     }
+
+    public void setPosition(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
 }

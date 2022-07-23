@@ -1,5 +1,6 @@
 package zvuv.zavakh.game.snake.screen;
 
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -9,10 +10,12 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import zvuv.zavakh.game.snake.App;
 import zvuv.zavakh.game.snake.common.GameManager;
 import zvuv.zavakh.game.snake.config.GameConfig;
-import zvuv.zavakh.game.snake.entity.EntityFactory;
+import zvuv.zavakh.game.snake.common.EntityFactory;
+import zvuv.zavakh.game.snake.system.*;
 import zvuv.zavakh.game.snake.system.debug.DebugCameraSystem;
 import zvuv.zavakh.game.snake.system.debug.DebugRenderSystem;
 import zvuv.zavakh.game.snake.system.debug.GridRenderSystem;
+import zvuv.zavakh.game.snake.system.utility.SnakeSystem;
 import zvuv.zavakh.game.snake.util.GdxUtils;
 
 public class GameScreen extends ScreenAdapter {
@@ -23,6 +26,7 @@ public class GameScreen extends ScreenAdapter {
     private ShapeRenderer shapeRenderer;
     private PooledEngine engine;
     private EntityFactory entityFactory;
+    private Entity snake;
 
     public GameScreen(App app) {
         this.app = app;
@@ -54,8 +58,18 @@ public class GameScreen extends ScreenAdapter {
         engine.addSystem(new GridRenderSystem(viewport, shapeRenderer));
         engine.addSystem(new DebugCameraSystem(camera, GameConfig.WORLD_CENTER_X, GameConfig.WORLD_CENTER_Y));
         engine.addSystem(new DebugRenderSystem(viewport, shapeRenderer));
+        engine.addSystem(new SnakeSystem());
+        engine.addSystem(new DirectionSystem());
+        engine.addSystem(new MovementSystem());
+        engine.addSystem(new BoundsSystem());
+        engine.addSystem(new PlayerControlSystem());
+        engine.addSystem(new WorldWrapSystem());
+        engine.addSystem(new CoinSpawnSystem());
+        engine.addSystem(new CollisionSystem(entityFactory));
 
-        entityFactory.getSnakeHead();
+        snake = entityFactory.getSnake();
+        entityFactory.getCoin();
+        GameManager.INSTANCE.reset();
     }
 
     @Override
