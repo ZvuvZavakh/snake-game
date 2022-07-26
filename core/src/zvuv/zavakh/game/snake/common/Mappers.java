@@ -29,5 +29,11 @@ public class Mappers {
     public static final ComponentMapper<BodyPartComponent> BODY_PART =
             ComponentMapper.getFor(BodyPartComponent.class);
 
+    public static final ComponentMapper<TextureComponent> TEXTURE =
+            ComponentMapper.getFor(TextureComponent.class);
+
+    public static final ComponentMapper<OrderZComponent> ORDER_Z =
+            ComponentMapper.getFor(OrderZComponent.class);
+
     private Mappers() {}
 }

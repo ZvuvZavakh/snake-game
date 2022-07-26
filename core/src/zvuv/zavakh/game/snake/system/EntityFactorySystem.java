@@ -1,16 +1,43 @@
-package zvuv.zavakh.game.snake.common;
+package zvuv.zavakh.game.snake.system;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import zvuv.zavakh.game.snake.common.AssetsDescriptors;
+import zvuv.zavakh.game.snake.common.RegionNames;
 import zvuv.zavakh.game.snake.component.*;
 import zvuv.zavakh.game.snake.config.GameConfig;
 
-public class EntityFactory {
+public class EntityFactorySystem extends EntitySystem {
 
-    private final PooledEngine engine;
+    private static final int BACKGROUND_ORDER_Z = 0;
+    private static final int COIN_ORDER_Z = 1;
+    private static final int BODY_ORDER_Z = 2;
+    private static final int HEAD_ORDER_Z = 3;
 
-    public EntityFactory(PooledEngine engine) {
-        this.engine = engine;
+    private final TextureAtlas textureAtlas;
+    private PooledEngine engine;
+
+    public EntityFactorySystem(AssetManager assetManager) {
+        textureAtlas = assetManager.get(AssetsDescriptors.GAMEPLAY_ATLAS);
+    }
+
+    @Override
+    public void addedToEngine(Engine engine) {
+        this.engine = (PooledEngine) engine;
+    }
+
+    @Override
+    public void update(float deltaTime) {
+        // NO PROCESSING
+    }
+
+    @Override
+    public boolean checkProcessing() {
+        return false;
     }
 
     public Entity getSnakeHead() {
@@ -27,6 +54,13 @@ public class EntityFactory {
         MovementComponent movementComponent = engine.createComponent(MovementComponent.class);
         PlayerComponent playerComponent = engine.createComponent(PlayerComponent.class);
         WorldWrapComponent worldWrapComponent = engine.createComponent(WorldWrapComponent.class);
+
+        TextureComponent textureComponent = engine.createComponent(TextureComponent.class);
+        textureComponent.setTextureRegion(textureAtlas.findRegion(RegionNames.HEAD));
+
+        OrderZComponent orderZComponent = engine.createComponent(OrderZComponent.class);
+        orderZComponent.setZ(HEAD_ORDER_Z);
+
         Entity shakeHead = engine.createEntity();
         shakeHead.add(positionComponent);
         shakeHead.add(dimensionComponent);
@@ -35,13 +69,15 @@ public class EntityFactory {
         shakeHead.add(movementComponent);
         shakeHead.add(playerComponent);
         shakeHead.add(worldWrapComponent);
+        shakeHead.add(textureComponent);
+        shakeHead.add(orderZComponent);
 
         engine.addEntity(shakeHead);
 
         return shakeHead;
     }
 
-    public Entity getSnake() {
+    public void getSnake() {
         SnakeComponent snakeComponent = engine.createComponent(SnakeComponent.class);
         snakeComponent.setHead(getSnakeHead());
 
@@ -49,8 +85,6 @@ public class EntityFactory {
         snake.add(snakeComponent);
 
         engine.addEntity(snake);
-
-        return snake;
     }
 
     public Entity getBodyPart(float x, float y) {
@@ -66,11 +100,19 @@ public class EntityFactory {
 
         BodyPartComponent bodyPartComponent = engine.createComponent(BodyPartComponent.class);
 
+        TextureComponent textureComponent = engine.createComponent(TextureComponent.class);
+        textureComponent.setTextureRegion(textureAtlas.findRegion(RegionNames.BODY));
+
+        OrderZComponent orderZComponent = engine.createComponent(OrderZComponent.class);
+        orderZComponent.setZ(BODY_ORDER_Z);
+
         Entity bodyPart = engine.createEntity();
         bodyPart.add(positionComponent);
         bodyPart.add(dimensionComponent);
         bodyPart.add(boundsComponent);
         bodyPart.add(bodyPartComponent);
+        bodyPart.add(textureComponent);
+        bodyPart.add(orderZComponent);
 
         engine.addEntity(bodyPart);
 
@@ -89,12 +131,41 @@ public class EntityFactory {
 
         CoinComponent coinComponent = engine.createComponent(CoinComponent.class);
 
+        TextureComponent textureComponent = engine.createComponent(TextureComponent.class);
+        textureComponent.setTextureRegion(textureAtlas.findRegion(RegionNames.COIN));
+
+        OrderZComponent orderZComponent = engine.createComponent(OrderZComponent.class);
+        orderZComponent.setZ(COIN_ORDER_Z);
+
         Entity coin = engine.createEntity();
         coin.add(positionComponent);
         coin.add(dimensionComponent);
         coin.add(boundsComponent);
         coin.add(coinComponent);
+        coin.add(textureComponent);
+        coin.add(orderZComponent);
 
         engine.addEntity(coin);
+    }
+
+    public void getBackground() {
+        PositionComponent positionComponent = engine.createComponent(PositionComponent.class);
+
+        DimensionComponent dimensionComponent = engine.createComponent(DimensionComponent.class);
+        dimensionComponent.setSize(GameConfig.WORLD_WIDTH, GameConfig.WORLD_HEIGHT);
+
+        TextureComponent textureComponent = engine.createComponent(TextureComponent.class);
+        textureComponent.setTextureRegion(textureAtlas.findRegion(RegionNames.BACKGROUND));
+
+        OrderZComponent orderZComponent = engine.createComponent(OrderZComponent.class);
+        orderZComponent.setZ(BACKGROUND_ORDER_Z);
+
+        Entity background = engine.createEntity();
+        background.add(positionComponent);
+        background.add(dimensionComponent);
+        background.add(textureComponent);
+        background.add(orderZComponent);
+
+        engine.addEntity(background);
     }
 }

@@ -8,8 +8,7 @@ import com.badlogic.gdx.Input;
 import zvuv.zavakh.game.snake.common.Mappers;
 import zvuv.zavakh.game.snake.component.DirectionComponent;
 import zvuv.zavakh.game.snake.component.PlayerComponent;
-import zvuv.zavakh.game.snake.component.SnakeComponent;
-import zvuv.zavakh.game.snake.entity.Direction;
+import zvuv.zavakh.game.snake.common.Direction;
 
 public class PlayerControlSystem extends IteratingSystem {
 

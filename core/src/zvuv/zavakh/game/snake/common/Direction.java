@@ -1,4 +1,4 @@
-package zvuv.zavakh.game.snake.entity;
+package zvuv.zavakh.game.snake.common;
 
 public enum Direction {
 

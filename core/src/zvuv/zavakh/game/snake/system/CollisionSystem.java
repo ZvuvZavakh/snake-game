@@ -1,11 +1,11 @@
 package zvuv.zavakh.game.snake.system;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IntervalSystem;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.math.Intersector;
-import zvuv.zavakh.game.snake.common.EntityFactory;
 import zvuv.zavakh.game.snake.common.GameManager;
 import zvuv.zavakh.game.snake.common.Mappers;
 import zvuv.zavakh.game.snake.component.*;
@@ -21,11 +21,17 @@ public class CollisionSystem extends IntervalSystem {
             CoinComponent.class
     ).get();
 
-    private final EntityFactory entityFactory;
+    private EntityFactorySystem entityFactorySystem;
+    private SoundSystem soundSystem;
 
-    public CollisionSystem(EntityFactory entityFactory) {
+    public CollisionSystem() {
         super(GameConfig.MOVE_TIME);
-        this.entityFactory = entityFactory;
+    }
+
+    @Override
+    public void addedToEngine(Engine engine) {
+        this.entityFactorySystem = engine.getSystem(EntityFactorySystem.class);
+        this.soundSystem = engine.getSystem(SoundSystem.class);
     }
 
     @Override
@@ -45,6 +51,8 @@ public class CollisionSystem extends IntervalSystem {
                 }
 
                 if (overlaps(snakeComponent.getHead(), bodyPart)) {
+                    soundSystem.lose();
+                    GameManager.INSTANCE.updateHighScore();
                     GameManager.INSTANCE.setGameOver();
                 }
             }
@@ -53,10 +61,12 @@ public class CollisionSystem extends IntervalSystem {
                 CoinComponent coinComponent = Mappers.COIN.get(coin);
 
                 if (coinComponent.isAvailable() && overlaps(snakeComponent.getHead(), coin)) {
+                    soundSystem.hitCoin();
                     coinComponent.setAvailable(false);
+                    GameManager.INSTANCE.incrementScore(GameConfig.COIN_VALUE);
 
                     PositionComponent positionComponent = Mappers.POSITION.get(snakeComponent.getHead());
-                    Entity bodyPart = entityFactory.getBodyPart(positionComponent.getX(), positionComponent.getY());
+                    Entity bodyPart = entityFactorySystem.getBodyPart(positionComponent.getX(), positionComponent.getY());
                     snakeComponent.addBodyPart(bodyPart);
                 }
             }

@@ -1,4 +1,4 @@
-package zvuv.zavakh.game.snake.system.utility;
+package zvuv.zavakh.game.snake.system;
 
 import com.badlogic.ashley.core.*;
 import zvuv.zavakh.game.snake.common.Mappers;

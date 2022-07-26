@@ -2,7 +2,7 @@ package zvuv.zavakh.game.snake.component;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.utils.Pool;
-import zvuv.zavakh.game.snake.entity.Direction;
+import zvuv.zavakh.game.snake.common.Direction;
 
 public class DirectionComponent implements Component, Pool.Poolable {
 
